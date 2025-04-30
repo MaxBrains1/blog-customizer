@@ -15,7 +15,6 @@ import { RadioGroup } from 'src/ui/radio-group';
 import styles from './ArticleParamsForm.module.scss';
 import { Separator } from 'src/ui/separator';
 
-// Интерфейс параметров статьи
 export interface Params {
 	fontFamily: string;
 	fontSize: string;
@@ -24,7 +23,6 @@ export interface Params {
 	contentWidth: string;
 }
 
-// Пропсы для компонента
 export interface ArticleParamsFormProps {
 	isOpen: boolean;
 	initialParams: Params;
@@ -43,14 +41,12 @@ export const ArticleParamsForm: React.FC<ArticleParamsFormProps> = ({
 	const [formParams, setFormParams] = useState<Params>(initialParams);
 	const panelRef = useRef<HTMLFormElement>(null);
 
-	// Сбрасываем форму при каждом открытии
 	useEffect(() => {
 		if (isOpen) {
 			setFormParams(initialParams);
 		}
 	}, [initialParams, isOpen]);
 
-	// Закрытие при клике вне панели
 	useEffect(() => {
 		const handleClickOutside = (e: MouseEvent) => {
 			if (
@@ -65,7 +61,6 @@ export const ArticleParamsForm: React.FC<ArticleParamsFormProps> = ({
 		return () => document.removeEventListener('mousedown', handleClickOutside);
 	}, [isOpen, onToggle]);
 
-	// Обработчики полей
 	const handleChange = <K extends keyof Params>(key: K, value: Params[K]) => {
 		setFormParams((prev) => ({ ...prev, [key]: value }));
 	};
@@ -94,7 +89,6 @@ export const ArticleParamsForm: React.FC<ArticleParamsFormProps> = ({
 				)}
 				onSubmit={handleSubmit}
 				onReset={handleFormReset}>
-				{/* Семейство шрифта */}
 				<Select
 					title='Шрифт'
 					options={fontFamilyOptions}
@@ -149,8 +143,6 @@ export const ArticleParamsForm: React.FC<ArticleParamsFormProps> = ({
 					onChange={(option) => handleChange('contentWidth', option.value)}
 					onClose={() => {}}
 				/>
-
-				{/* Внизу кнопки */}
 				<div className={styles.bottomContainer}>
 					<Button title='Сбросить' htmlType='reset' type='clear' />
 					<Button title='Применить' htmlType='submit' type='apply' />
