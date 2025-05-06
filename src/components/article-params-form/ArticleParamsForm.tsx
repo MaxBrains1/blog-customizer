@@ -3,17 +3,19 @@ import clsx from 'clsx';
 import { ArrowButton } from 'src/ui/arrow-button';
 import { Button } from 'src/ui/button';
 import { Select } from 'src/ui/select';
+import { Text } from 'src/ui/text';
 import {
 	fontFamilyOptions,
 	fontColors,
 	backgroundColors,
 	contentWidthArr,
 	fontSizeOptions,
+	defaultArticleState,
+	OptionType,
 } from 'src/constants/articleProps';
 import { RadioGroup } from 'src/ui/radio-group';
-
-import styles from './ArticleParamsForm.module.scss';
 import { Separator } from 'src/ui/separator';
+import styles from './ArticleParamsForm.module.scss';
 
 export interface Params {
 	fontFamily: string;
@@ -24,22 +26,21 @@ export interface Params {
 }
 
 export interface ArticleParamsFormProps {
-	isOpen: boolean;
 	initialParams: Params;
-	onToggle: () => void;
 	onApply: (params: Params) => void;
 	onReset: () => void;
 }
 
 export const ArticleParamsForm: React.FC<ArticleParamsFormProps> = ({
-	isOpen,
 	initialParams,
-	onToggle,
 	onApply,
 	onReset,
 }) => {
+	const [isOpen, setIsOpen] = useState(false);
 	const [formParams, setFormParams] = useState<Params>(initialParams);
 	const panelRef = useRef<HTMLFormElement>(null);
+
+	const handleToggle = () => setIsOpen((open) => !open);
 
 	useEffect(() => {
 		if (isOpen) {
@@ -48,18 +49,17 @@ export const ArticleParamsForm: React.FC<ArticleParamsFormProps> = ({
 	}, [initialParams, isOpen]);
 
 	useEffect(() => {
-		const handleClickOutside = (e: MouseEvent) => {
-			if (
-				isOpen &&
-				panelRef.current &&
-				!panelRef.current.contains(e.target as Node)
-			) {
-				onToggle();
-			}
-		};
-		document.addEventListener('mousedown', handleClickOutside);
-		return () => document.removeEventListener('mousedown', handleClickOutside);
-	}, [isOpen, onToggle]);
+		if (isOpen) {
+			const handleClickOutside = (e: MouseEvent) => {
+				if (panelRef.current && !panelRef.current.contains(e.target as Node)) {
+					setIsOpen(false);
+				}
+			};
+			document.addEventListener('mousedown', handleClickOutside);
+			return () =>
+				document.removeEventListener('mousedown', handleClickOutside);
+		}
+	}, [isOpen]);
 
 	const handleChange = <K extends keyof Params>(key: K, value: Params[K]) => {
 		setFormParams((prev) => ({ ...prev, [key]: value }));
@@ -68,18 +68,29 @@ export const ArticleParamsForm: React.FC<ArticleParamsFormProps> = ({
 	const handleSubmit = (e: React.FormEvent) => {
 		e.preventDefault();
 		onApply(formParams);
-		onToggle();
+		setIsOpen(false);
 	};
 
 	const handleFormReset = (e: React.FormEvent) => {
 		e.preventDefault();
-		setFormParams(initialParams);
+		const defaultParams: Params = {
+			fontFamily: defaultArticleState.fontFamilyOption.value,
+			fontSize: defaultArticleState.fontSizeOption.value,
+			textColor: defaultArticleState.fontColor.value,
+			backgroundColor: defaultArticleState.backgroundColor.value,
+			contentWidth: defaultArticleState.contentWidth.value,
+		};
+		setFormParams(defaultParams);
 		onReset();
+	};
+
+	const getSelectedOption = (options: OptionType[], value: string) => {
+		return options.find((opt) => opt.value === value) || options[0];
 	};
 
 	return (
 		<>
-			<ArrowButton isOpen={isOpen} onClick={onToggle} />
+			<ArrowButton isOpen={isOpen} onClick={handleToggle} />
 			<form
 				ref={panelRef}
 				className={clsx(
@@ -89,34 +100,27 @@ export const ArticleParamsForm: React.FC<ArticleParamsFormProps> = ({
 				)}
 				onSubmit={handleSubmit}
 				onReset={handleFormReset}>
+				<Text as='h2' size={31} weight={800} uppercase>
+					Задайте параметры
+				</Text>
 				<Select
 					title='Шрифт'
 					options={fontFamilyOptions}
-					selected={
-						fontFamilyOptions.find(
-							(opt) => opt.value === formParams.fontFamily
-						) || fontFamilyOptions[0]
-					}
+					selected={getSelectedOption(fontFamilyOptions, formParams.fontFamily)}
 					onChange={(option) => handleChange('fontFamily', option.value)}
 					onClose={() => {}}
 				/>
 				<RadioGroup
-					title='рАЗМЕР шрифта'
+					title='Размер шрифта'
 					name='fontSize'
 					options={fontSizeOptions}
-					selected={
-						fontSizeOptions.find((opt) => opt.value === formParams.fontSize) ||
-						fontSizeOptions[0]
-					}
+					selected={getSelectedOption(fontSizeOptions, formParams.fontSize)}
 					onChange={(option) => handleChange('fontSize', option.value)}
 				/>
 				<Select
 					title='Цвет шрифта'
 					options={fontColors}
-					selected={
-						fontColors.find((opt) => opt.value === formParams.textColor) ||
-						fontColors[0]
-					}
+					selected={getSelectedOption(fontColors, formParams.textColor)}
 					onChange={(option) => handleChange('textColor', option.value)}
 					onClose={() => {}}
 				/>
@@ -124,22 +128,17 @@ export const ArticleParamsForm: React.FC<ArticleParamsFormProps> = ({
 				<Select
 					title='Цвет фона'
 					options={backgroundColors}
-					selected={
-						backgroundColors.find(
-							(opt) => opt.value === formParams.backgroundColor
-						) || backgroundColors[0]
-					}
+					selected={getSelectedOption(
+						backgroundColors,
+						formParams.backgroundColor
+					)}
 					onChange={(option) => handleChange('backgroundColor', option.value)}
 					onClose={() => {}}
 				/>
 				<Select
 					title='Ширина контента'
 					options={contentWidthArr}
-					selected={
-						contentWidthArr.find(
-							(opt) => opt.value === formParams.contentWidth
-						) || contentWidthArr[0]
-					}
+					selected={getSelectedOption(contentWidthArr, formParams.contentWidth)}
 					onChange={(option) => handleChange('contentWidth', option.value)}
 					onClose={() => {}}
 				/>
