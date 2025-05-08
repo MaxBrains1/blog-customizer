@@ -37,7 +37,13 @@ export const ArticleParamsForm: React.FC<ArticleParamsFormProps> = ({
 	onReset,
 }) => {
 	const [isOpen, setIsOpen] = useState(false);
-	const [formParams, setFormParams] = useState<Params>(initialParams);
+	const [formParams, setFormParams] = useState<Params>({
+		fontFamily: defaultArticleState.fontFamilyOption.value,
+		fontSize: defaultArticleState.fontSizeOption.value,
+		textColor: defaultArticleState.fontColor.value,
+		backgroundColor: defaultArticleState.backgroundColor.value,
+		contentWidth: defaultArticleState.contentWidth.value,
+	});
 	const panelRef = useRef<HTMLFormElement>(null);
 
 	const handleToggle = () => setIsOpen((open) => !open);
@@ -84,8 +90,12 @@ export const ArticleParamsForm: React.FC<ArticleParamsFormProps> = ({
 		onReset();
 	};
 
-	const getSelectedOption = (options: OptionType[], value: string) => {
-		return options.find((opt) => opt.value === value) || options[0];
+	const getSelectedOption = (
+		options: OptionType[],
+		value: string,
+		defaultOption: OptionType
+	) => {
+		return options.find((opt) => opt.value === value) || defaultOption;
 	};
 
 	return (
@@ -106,7 +116,11 @@ export const ArticleParamsForm: React.FC<ArticleParamsFormProps> = ({
 				<Select
 					title='Шрифт'
 					options={fontFamilyOptions}
-					selected={getSelectedOption(fontFamilyOptions, formParams.fontFamily)}
+					selected={getSelectedOption(
+						fontFamilyOptions,
+						formParams.fontFamily,
+						defaultArticleState.fontFamilyOption
+					)}
 					onChange={(option) => handleChange('fontFamily', option.value)}
 					onClose={() => {}}
 				/>
@@ -114,13 +128,21 @@ export const ArticleParamsForm: React.FC<ArticleParamsFormProps> = ({
 					title='Размер шрифта'
 					name='fontSize'
 					options={fontSizeOptions}
-					selected={getSelectedOption(fontSizeOptions, formParams.fontSize)}
+					selected={getSelectedOption(
+						fontSizeOptions,
+						formParams.fontSize,
+						defaultArticleState.fontSizeOption
+					)}
 					onChange={(option) => handleChange('fontSize', option.value)}
 				/>
 				<Select
 					title='Цвет шрифта'
 					options={fontColors}
-					selected={getSelectedOption(fontColors, formParams.textColor)}
+					selected={getSelectedOption(
+						fontColors,
+						formParams.textColor,
+						defaultArticleState.fontColor
+					)}
 					onChange={(option) => handleChange('textColor', option.value)}
 					onClose={() => {}}
 				/>
@@ -130,7 +152,8 @@ export const ArticleParamsForm: React.FC<ArticleParamsFormProps> = ({
 					options={backgroundColors}
 					selected={getSelectedOption(
 						backgroundColors,
-						formParams.backgroundColor
+						formParams.backgroundColor,
+						defaultArticleState.backgroundColor
 					)}
 					onChange={(option) => handleChange('backgroundColor', option.value)}
 					onClose={() => {}}
@@ -138,7 +161,11 @@ export const ArticleParamsForm: React.FC<ArticleParamsFormProps> = ({
 				<Select
 					title='Ширина контента'
 					options={contentWidthArr}
-					selected={getSelectedOption(contentWidthArr, formParams.contentWidth)}
+					selected={getSelectedOption(
+						contentWidthArr,
+						formParams.contentWidth,
+						defaultArticleState.contentWidth
+					)}
 					onChange={(option) => handleChange('contentWidth', option.value)}
 					onClose={() => {}}
 				/>
