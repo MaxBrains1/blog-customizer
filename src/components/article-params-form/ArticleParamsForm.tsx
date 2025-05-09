@@ -37,20 +37,14 @@ export const ArticleParamsForm: React.FC<ArticleParamsFormProps> = ({
 	onReset,
 }) => {
 	const [isOpen, setIsOpen] = useState(false);
-	const [formParams, setFormParams] = useState<Params>({
-		fontFamily: defaultArticleState.fontFamilyOption.value,
-		fontSize: defaultArticleState.fontSizeOption.value,
-		textColor: defaultArticleState.fontColor.value,
-		backgroundColor: defaultArticleState.backgroundColor.value,
-		contentWidth: defaultArticleState.contentWidth.value,
-	});
+	const [formParams, setFormParams] = useState<Params>(initialParams); // Используем initialParams
 	const panelRef = useRef<HTMLFormElement>(null);
 
 	const handleToggle = () => setIsOpen((open) => !open);
 
 	useEffect(() => {
 		if (isOpen) {
-			setFormParams(initialParams);
+			setFormParams(initialParams); // Устанавливаем текущие параметры статьи при открытии
 		}
 	}, [initialParams, isOpen]);
 
@@ -86,8 +80,8 @@ export const ArticleParamsForm: React.FC<ArticleParamsFormProps> = ({
 			backgroundColor: defaultArticleState.backgroundColor.value,
 			contentWidth: defaultArticleState.contentWidth.value,
 		};
-		setFormParams(defaultParams);
-		onReset();
+		setFormParams(defaultParams); // Сбрасываем форму до defaultArticleState
+		onReset(); // Сбрасываем параметры статьи
 	};
 
 	const getSelectedOption = (

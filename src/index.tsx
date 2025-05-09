@@ -13,27 +13,24 @@ import styles from './styles/index.module.scss';
 const domNode = document.getElementById('root') as HTMLDivElement;
 const root = createRoot(domNode);
 
+// Определяем начальные параметры из defaultArticleState
+const initialParams: Params = {
+	fontFamily: defaultArticleState.fontFamilyOption.value,
+	fontSize: defaultArticleState.fontSizeOption.value,
+	textColor: defaultArticleState.fontColor.value,
+	backgroundColor: defaultArticleState.backgroundColor.value,
+	contentWidth: defaultArticleState.contentWidth.value,
+};
+
 const App = () => {
-	const [appliedParams, setAppliedParams] = useState<Params>({
-		fontFamily: defaultArticleState.fontFamilyOption.value,
-		fontSize: defaultArticleState.fontSizeOption.value,
-		textColor: defaultArticleState.fontColor.value,
-		backgroundColor: defaultArticleState.backgroundColor.value,
-		contentWidth: defaultArticleState.contentWidth.value,
-	});
+	const [appliedParams, setAppliedParams] = useState<Params>(initialParams);
 
 	const handleApply = (newParams: Params) => {
 		setAppliedParams(newParams);
 	};
 
 	const handleReset = () => {
-		setAppliedParams({
-			fontFamily: defaultArticleState.fontFamilyOption.value,
-			fontSize: defaultArticleState.fontSizeOption.value,
-			textColor: defaultArticleState.fontColor.value,
-			backgroundColor: defaultArticleState.backgroundColor.value,
-			contentWidth: defaultArticleState.contentWidth.value,
-		});
+		setAppliedParams(initialParams);
 	};
 
 	return (
